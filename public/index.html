@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIRIN</title>
+</head>
+<body>
+    <form style="text-align:  center; margin-top: 200px;"  method="post">
+        <label for="Name">Ad Soyad:</label>
+        <input type="text" id="Name" name="Name"><br><br>
+        <label for="Password">Şifre:</label>
+        <input type="password" id="password" name="Password"><br><br>
+        <input type="submit" id="giriş" value="Giriş Yap" name="Submit">
+    </form>
+<div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 20px;">  <button type="button"  onclick="window.location.href='register.html'">Yeni Hesap Aç</button> </div> 
+<script type="module">
+const qualify=document.getElementById("giriş");
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  import { getFirestore, collection,query, where, addDoc,getCountFromServer,getDocs} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  const firebaseConfig = {
+  apiKey: "AIzaSyC4WNPVJmGtCEYODs-HRr31xylLvaGh_00",
+  authDomain: "firin-de67b.firebaseapp.com",
+  projectId: "firin-de67b",
+  storageBucket: "firin-de67b.firebasestorage.app",
+  messagingSenderId: "61410927896",
+  appId: "1:61410927896:web:e7e1a4e6168822a360aa6d",
+  measurementId: "G-R7HVRW9S6P"
+};
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+qualify.addEventListener("click", function(event) {
+event.preventDefault();
+async function kontrol() {
+    const Name=document.getElementById("Name").value.trim();
+const Password=document.getElementById("password").value.trim();
+     if (Name === ""  || Password === ""){
+  alert("geçersiz kayıt isteği");
+  return;
+  }
+
+    const control=(query(collection(db,"kullanicilar"),where("isim","==",Name),where("sifre","==",Password)));
+    const result=await getDocs(control);
+if(result.empty)
+{
+    alert("kullanıcı adı veya şifre hatalı")
+    return;
+}else{
+sessionStorage.setItem("aktifKullanici", Name);
+alert("giriş başarılı ana sayfaya yönlendiriliyorsunuz");
+window.location.href="main.html";
+}}
+
+kontrol();
+
+
+    });
+
+</script>
+
+</body>
+</html>

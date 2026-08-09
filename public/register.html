@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firin Register</title>
+</head>
+<body>
+      <form style="text-align:  center;"  method="post">
+        <label for="Name">Ad Soyad:</label>
+        <input type="text" id="Name" name="Name"><br><br>
+        <label for="Password">Şifre:</label>
+        <input type="password" id="Password" name="Password"><br><br>
+        <input   id="submit" type="submit" value="Kayıt Ol" name="Submit">
+    </form>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  import { getFirestore, collection,query, where, addDoc,getCountFromServer,getDocs} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  const firebaseConfig = {
+  apiKey: "AIzaSyC4WNPVJmGtCEYODs-HRr31xylLvaGh_00",
+  authDomain: "firin-de67b.firebaseapp.com",
+  projectId: "firin-de67b",
+  storageBucket: "firin-de67b.firebasestorage.app",
+  messagingSenderId: "61410927896",
+  appId: "1:61410927896:web:e7e1a4e6168822a360aa6d",
+  measurementId: "G-R7HVRW9S6P"
+};
+const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+  
+  const kayitButonu = document.getElementById("submit");
+
+  // Tıklama olayını DOĞRUDAN async yapıyoruz
+  kayitButonu.addEventListener("click", async function(event) {
+    event.preventDefault(); 
+    
+    const girilenIsim = document.getElementById("Name").value.trim();
+    const girilenSifre = document.getElementById("Password").value.trim();
+    
+    // 1. Temel Doğrulamalar
+    if (girilenIsim === "" || girilenSifre === "") {
+      alert("Geçersiz kayıt isteği");
+      return; 
+    }
+    if (girilenSifre.length < 6) {
+      alert("Şifre en az 6 karakter olmalıdır!");
+      return; 
+    }
+
+    try {
+      // 2. KAPASİTE KONTROLÜ (Bekleyerek)
+      const count = (await getCountFromServer(collection(db, "kullanicilar"))).data().count;
+      if (count >= 50) {
+        alert("Kullanıcı sayısı maksimuma ulaşmıştır lütfen onay bekleyin");
+        return; // İşlem burada kesilir, addDoc ASLA çalışmaz!
+      }
+
+      // 3. İSİM ALINMIŞ MI KONTROLÜ (Bekleyerek)
+      const sorgu = query(collection(db, "kullanicilar"), where("isim", "==", girilenIsim));
+      const control = await getDocs(sorgu);
+      
+      if (!control.empty) {
+        alert("Kullanıcı adı halihazırda alındı");
+        return; // İşlem burada kesilir, addDoc ASLA çalışmaz!
+      }
+
+      // 4. BÜTÜN TESTLER GEÇİLDİYSE KAYIT İŞLEMİ
+      await addDoc(collection(db, "kullanicilar"), {
+        isim: girilenIsim,
+        sifre: girilenSifre
+      });
+      
+      alert("Kayıt başarılı, giriş sayfasına yönlendiriliyorsunuz...");
+      window.location.href = "/"; // Veya login html sayfanın adı neyse
+      
+    } catch (hata) {
+      alert("Veritabanı işlemi sırasında bir hata oluştu: " + hata);
+    }
+  });
+
+    </script>
+</body>
+</html>
