@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontrol Paneli</title>
+    <style>
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; }
+        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding: 20px; box-sizing: border-box; }
+        .sidebar h2 { margin-top: 0; font-size: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        .menu-item { padding: 10px 0; cursor: pointer; color: #bdc3c7; transition: 0.3s; }
+        .menu-item:hover { color: white; padding-left: 5px; }
+        .content { flex: 1; padding: 30px; box-sizing: border-box; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-cikis { background-color: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-cikis:hover { background-color: #c0392b; }
+        .card-container { display: flex; gap: 20px; }
+        .card { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; }
+        .card h3 { margin: 0 0 10px 0; color: #7f8c8d; font-size: 14px; text-transform: uppercase; }
+        .card .value { font-size: 28px; font-weight: bold; color: #2c3e50; }
+        .ortak-tablo{border-collapse: collapse; width: 100%;}
+        .ortak-tablo th , .ortak-tablo td {border: 1px solid #ddd; padding: 8px; text-align: left;}
+        .ortak-tablo th { background-color: #f2f2f2; }  
+        .ortak-tablo td:focus { outline: 2px solid #3498db; background-color: #e8f4f8;}
+        .ayarlar-konteyner { max-width: 500px; margin-top: 20px; }
+        .ayar-grubu { margin-bottom: 25px; display: flex; flex-direction: column; }
+        .ayar-grubu label { font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.9em;}
+        .ayar-input { padding: 12px; border: 1px solid #bdc3c7; border-radius: 6px; font-size: 16px; outline: none; background-color: #f8f9fa; cursor: pointer; transition: 0.2s;}
+        .ayar-input:focus { border-color: #3498db; background-color: white;}
+        .btn-kaydet { background-color: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.3s; }
+        .btn-kaydet:hover { background-color: #2980b9; transform: translateY(-2px); }
+        body.dark-theme { background-color: #121212; color: #e0e0e0; }
+        body.dark-theme .sidebar { background-color: #1a1a1a; border-right: 1px solid #333; }
+        body.dark-theme .card { background-color: #1e1e1e; color: #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        body.dark-theme .card h3 { color: #aaaaaa; }
+        body.dark-theme .card .value { color: #ffffff; }
+        body.dark-theme .ayar-grubu label { color: #aaaaaa; }
+        body.dark-theme .ayar-input { background-color: #333; color: white; border-color: #555; }
+        body.dark-theme h1, body.dark-theme h2 { color: #e0e0e0; }
+        body.dark-theme .ortak-tablo th { background-color: #333; color: #fff; border-color: #444; }
+        body.dark-theme .ortak-tablo td { border-color: #444; }
+        body.dark-theme .ortak-tablo td:focus { background-color: #2c3e50; }
+        body.dark-theme .excel-tablosu th { background-color: #333; color: #fff; border-color: #444; }
+    </style>
+</head>
+<body>
+
+    
+    <div class="sidebar">
+        <h2>Sistem Paneli</h2>
+        <div class="menu-item" id="mutual" data-locate="ortak-böl">📊 Ortak Tablo</div>
+        <div class="menu-item" data-locate="tablo">📡 kişisel tablo</div>
+        <div class="menu-item" >📡 arşiv</div>
+        <div class="menu-item" data-locate="ayarlar">⚙️ Ayarlar</div>
+    </div>
+
+    
+    <div class="content">
+        <div class="header">
+            <h1 id="karsilamaMesaji">Yükleniyor...</h1>
+            <button id="cikisButonu" class="btn-cikis">Çıkış Yap</button>
+        </div>
+
+      
+        <div class="card-container">
+            <div class="card">
+                <h3>Sistem Durumu</h3>
+                <div class="value" style="color: #27ae60;">Aktif</div>
+            </div>
+            <!--<div class="card">
+                <h3>Müşteri/ Şoför tablosu</h3>
+                <div class="value" id="veriSayaci">Yükleniyor...</div>
+                <button id="addRow" >Müşteri ekle</button>
+            </div>-->
+            <div class="card">
+                <h3>Son Güncelleme</h3>
+                <div class="value" id="sonGuncelleme">Şimdi</div>
+            </div>
+        </div>
+        <div class="card page-div" id="tablo" style="margin: 30px;" >
+                <h3>Müşteri/ Şoför tablosu</h3>
+                <div class="value" id="veriSayaci">Yükleniyor...</div>
+                <button id="addRow" >Müşteri ekle</button> <button id="save">Kaydet</button>
+            </div>
+             <div class="card page-div" id="ortak-böl" style="display: none; margin-top: 30px;"  >
+                <h3>Müşteri/ Şoför tablosu</h3>
+            <table class="ortak-tablo" id="ortak" >
+                    <tr >
+                <th>Müşteriler</th>
+                <th>Teslim Edilen</th>
+                <th>Değişen</th>
+                <th>İade</th>
+                <th>Saat</th>
+                </tr>
+                </table>
+                </div>
+            <div class="card page-div" id="ayarlar" style="display: none; margin-top: 30px;">
+                <h3 style="border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Sistem Ayarları</h3>
+    
+    <div class="ayarlar-konteyner">
+        
+       
+        <div class="ayar-grubu">
+            <label for="tema-secici">Görünüm Teması:</label>
+            <select id="tema-secici" class="ayar-input">
+                <option value="light">☀️ Açık Tema (Standart)</option>
+                <option value="dark">🌙 Koyu Tema (Dark Mode)</option>
+            </select>
+        </div>
+
+        
+        <div class="ayar-grubu">
+            <label for="punto-secici">Sistem Yazı Boyutu (Punto):</label>
+            <select id="punto-secici" class="ayar-input">
+                <option value="14px">Küçük</option>
+                <option value="16px" selected>Orta (Standart)</option>
+                <option value="18px">Büyük</option>
+                <option value="20px">Çok Büyük</option>
+            </select>
+        </div>
+        
+        <button id="ayarlari-kaydet" class="btn-kaydet">Ayarları Uygula</button>
+    </div>
+
+
+
+            </div>
+    </div> 
+
+
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getCountFromServer,doc, setDoc,getDocs,getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase Yapılandırması (Kendi config bilgilerini buraya kopyala)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4WNPVJmGtCEYODs-HRr31xylLvaGh_00",
+            authDomain: "firin-de67b.firebaseapp.com",
+            projectId: "firin-de67b",
+            storageBucket: "firin-de67b.firebasestorage.app",
+            messagingSenderId: "61410927896",
+            appId: "1:61410927896:web:e7e1a4e6168822a360aa6d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+       
+        const aktifKullanici = sessionStorage.getItem("aktifKullanici");
+        if (aktifKullanici === null) {
+            alert("Bu sayfayı görüntülemek için giriş yapmalısınız!");
+            window.location.href = "index.html"; 
+        } else {
+            const formatliIsim = aktifKullanici.charAt(0).toUpperCase() + aktifKullanici.slice(1);
+            document.getElementById("karsilamaMesaji").innerText = "Hoş geldin, " + formatliIsim;
+        }
+
+        document.getElementById("cikisButonu").addEventListener("click", function() {
+            sessionStorage.removeItem("aktifKullanici");
+            window.location.href = "index.html";
+        });
+
+         function panelVerileriniGetir() {
+            try {
+                document.getElementById("veriSayaci").innerHTML=`
+                         <style>
+            .excel-tablosu { border-collapse: collapse; width: 100%; }
+            .excel-tablosu th, .excel-tablosu td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            .excel-tablosu th { background-color: #f2f2f2; }
+            .excel-tablosu td:focus { outline: 2px solid #3498db; background-color: #e8f4f8;}
+            </style>
+                <table class="excel-tablosu">
+                    <tr >
+                <th>Müşteriler</th>
+                <th>Teslim Edilen</th>
+                <th>Değişen</th>
+                <th>İade</th>
+                <th>Saat</th>
+                </tr>
+                </table>
+                     `
+
+            } catch (error) {
+                console.error("Veri çekilirken hata:", error);
+                document.getElementById("veriSayaci").innerText = "Hata!";
+                return;
+            }
+            return true;
+        }
+        function addClient(){
+           
+          document.querySelector(".excel-tablosu").insertAdjacentHTML('beforeend', `
+        <tr>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+        </tr>
+    `);}
+               async function save(){
+
+    // 1. Tabloyu ve içindeki tüm satırları (tr) yakala
+    const tablo = document.querySelector(".excel-tablosu");
+    const satirlar = tablo.querySelectorAll("tr");
+    
+    // Verileri içine dolduracağımız boş bir dizi (liste) oluşturuyoruz
+    let tabloVerileri = [];
+                if(satirlar.length===1)
+               {
+                alert("satır yok");
+                return;
+               }
+
+    
+    // Döngüyü 1'den başlatıyoruz çünkü 0. satırda <th> (Başlıklar) var, onları kaydetmeye gerek yok.
+    for (let i = 1; i < satirlar.length; i++) {
+        let hucreler = satirlar[i].querySelectorAll("td");  
+        
+        // Eğer satırda hücre varsa veriyi al
+        
+        if (hucreler.length >= 5) {
+            let musteriIsmi = hucreler[0].textContent.trim();
+            let Teslim = hucreler[1].textContent.trim();
+            let Iade= hucreler[2].textContent.trim();
+            let değişim = hucreler[3].textContent.trim();
+            let saat = hucreler[4].textContent.trim();
+        
+
+        
+            if (musteriIsmi !== "" && saat !== "" && Teslim !== "" && Iade !== "" && değişim !== "") {
+                tabloVerileri.push({
+                    musteri: musteriIsmi,
+                    TeslimEdilen:Teslim,
+                    iade:Iade,
+                    değişen:değişim,
+                    Saat: saat
+                });
+            }else{
+                alert("her hücre dolu olmalı");
+                return;
+            }}
+            else{
+                alert("veriler alınamadı");
+                return;
+            }
+                
+            }
+        
+    
+    
+    try {
+        await setDoc(doc(db, aktifKullanici, "tablo_kayitlari"), {
+            Veriler: tabloVerileri
+        });
+        
+        alert("Tablo başarıyla Firestore'a kaydedildi!");
+    } catch (error) {
+        console.error("Kaydetme hatası: ", error);
+        alert("Kaydedilirken bir hata oluştu.");
+        return;
+    }
+                }
+             
+    async function callback() {
+
+    const veriler=await getDoc(doc(db,aktifKullanici,"tablo_kayitlari"));
+    if (veriler.exists()) {
+    const sonveriler=veriler.data().Veriler;
+     const tablo=document.querySelector(".excel-tablosu");
+tablo.insertAdjacentHTML('beforeend', sonveriler.map(satir => 
+    `<tr>
+        <td contenteditable="true">${satir.musteri}</td>
+        <td contenteditable="true">${satir.TeslimEdilen}</td>
+        <td contenteditable="true">${satir.iade}</td>
+        <td contenteditable="true">${satir.değişen}</td>
+        <td contenteditable="true">${satir.sofor}</td>
+    </tr>`
+).join(''));
+}
+    }
+
+    const menuButonlari = document.querySelectorAll(".menu-item");
+    const tumSayfalar = document.querySelectorAll(".page-div");
+    menuButonlari.forEach(buton=>{buton.addEventListener("click", async function change() {
+       const open= buton.getAttribute("data-locate");
+        tumSayfalar.forEach(sayfa => {
+        sayfa.style.display = 'none'; 
+});
+    document.getElementById(open).style.display = 'block';
+    });
+});
+
+const temaSecici = document.getElementById("tema-secici");
+const puntoSecici = document.getElementById("punto-secici");
+const ayarKaydetButonu = document.getElementById("ayarlari-kaydet");
+async function settings() {
+    
+
+const kaydedilmistema= await getDoc(doc(db, aktifKullanici,"ayarlar"))
+if(kaydedilmistema.exists())
+{
+temaSecici.value=kaydedilmistema.data().Tema;
+puntoSecici.value=kaydedilmistema.data().punto;
+}
+
+    if (temaSecici.value === "dark") {
+        document.body.classList.add("dark-theme"); 
+    } else {
+        document.body.classList.remove("dark-theme"); 
+    }
+    document.body.style.fontSize = puntoSecici.value;
+}
+settings();
+ayarKaydetButonu.addEventListener("click", async () => {
+    
+
+    if (temaSecici.value === "dark") {
+        document.body.classList.add("dark-theme"); 
+    } else {
+        document.body.classList.remove("dark-theme"); 
+    }
+    document.body.style.fontSize = puntoSecici.value;
+    ayarKaydetButonu.innerText = "✓ Ayarlar Kaydedildi!";
+    ayarKaydetButonu.style.backgroundColor = "#27ae60"; 
+    try {
+        await setDoc(doc(db, aktifKullanici, "ayarlar"), {
+            Tema:temaSecici.value,
+            punto:puntoSecici.value
+        });
+        
+        alert(" başarıyla  kaydedildi!");
+    } catch (error) {
+        console.error("Kaydetme hatası: ", error);
+        alert("Kaydedilirken bir hata oluştu.");
+        return;
+    }
+
+    setTimeout(() => {
+        ayarKaydetButonu.innerText = "Ayarları Uygula";
+        ayarKaydetButonu.style.backgroundColor = "#3498db";
+        
+    }, 2000);
+});
+
+   if(panelVerileriniGetir()){callback();}
+                document.getElementById("addRow").addEventListener("click", addClient);
+                document.getElementById("save").addEventListener("click", save);
+                
+               
+    </script>
+</body>
+</html> 
