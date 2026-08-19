@@ -348,7 +348,7 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
-            <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
+            <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>-->
         </tr>
     `);}
                async function save(){
@@ -369,8 +369,8 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
         let hucreler = satirlar[i].querySelectorAll("td");  
         
         
-        if (hucreler.length >= 5) {
-            let musteriIsmi = hucreler[0].textContent.trim();
+        if (hucreler.length >= 4) {
+            let musteriIsmi = hucreler[0].textContent.trim().toLocaleUpperCase('tr-TR');
             let Teslim = hucreler[1].textContent.trim();
             let değişim= hucreler[2].textContent.trim();
             let Iade = hucreler[3].textContent.trim();
@@ -529,7 +529,7 @@ async function mutualfunc() {
 
         let addT = row.TeslimEdilen || 0;
         //let addS=row.Saat;
-        agg[c].detail[aktifKullanici] = (agg[c].detail[aktifKullanici] || 0) + addT;
+        agg[c].detail[aktifKullanici] = (agg[c].detail[aktifKullanici] || 0) + "--" +addT ;
     });
 
     let finData = Object.values(agg);
@@ -553,7 +553,7 @@ async function mutualfunc() {
         mTab.insertAdjacentHTML('beforeend', finData.map(row => {
             let detTxt = Object.entries(row.detail).map(([usr, amt]) => `${usr}: ${amt}`).join(" | ");
             
-            return `<tr>
+             `<tr>
                 <td>${row.musteri}</td>
                 <td>${row.TeslimEdilen}</td>
                 <td>${row.değişen}</td>
@@ -642,7 +642,7 @@ async function delete_old() {
 
     while (devam) {
         const date = new Date();
-        date.setDate(dt.getDate() - i);
+        date.setDate(date.getDate() - i);
 
         const docId = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
 
