@@ -42,6 +42,90 @@
         body.dark-theme .ortak-tablo td { border-color: #444; }
         body.dark-theme .ortak-tablo td:focus { background-color: #2c3e50; }
         body.dark-theme .excel-tablosu th { background-color: #333; color: #fff; border-color: #444; }
+        body.dark-theme .arşiv-tablosu {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+}
+
+
+body.dark-theme .arşiv-tablosu th {
+    background-color: #121212;
+    color: #ffffff;
+    border-bottom: 1px solid #333333;
+}
+
+
+body.dark-theme .arşiv-tablosu td {
+    border-bottom: 1px solid #333333;
+    color: #cccccc;
+}
+
+
+body.dark-theme .arşiv-tablosu tr:nth-child(even) {
+    background-color: #252525;
+}
+
+
+body.dark-theme .arşiv-tablosu tr:hover {
+    background-color: #333333;
+}
+
+
+body.dark-theme .arşiv-tablosu td[colspan="6"] {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border-bottom: 2px solid #444444;
+}
+        
+.arşiv-tablosu {
+    width: 100%;
+    border-collapse: collapse; 
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+}
+
+
+.arşiv-tablosu th {
+    background-color: #2c3e50;
+    color: #ffffff;
+    text-align: left;
+    padding: 14px 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap; 
+}
+
+
+.arşiv-tablosu td {
+    padding: 12px;
+    border-bottom: 1px solid #eeeeee;
+    color: #333333;
+}
+
+
+.arşiv-tablosu tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+
+.arşiv-tablosu tr:hover {
+    background-color: #e3f2fd;
+    transition: background-color 0.2s ease;
+}
+
+
+.arşiv-tablosu td[colspan="6"] {
+    background-color: #e9ecef;
+    color: #2c3e50;
+    font-size: 16px;
+    padding: 10px;
+    letter-spacing: 1px;
+}
     </style>
 </head>
 <body>
@@ -51,7 +135,7 @@
         <h2>Sistem Paneli</h2>
         <div class="menu-item" id="mutual" data-locate="ortak-böl">📊 Ortak Tablo</div>
         <div class="menu-item" data-locate="tablo">📡 kişisel tablo</div>
-        <div class="menu-item" >📡 arşiv</div>
+        <div class="menu-item" id="archive" data-locate="arşive">📡 arşiv</div>
         <div class="menu-item" data-locate="ayarlar">⚙️ Ayarlar</div>
     </div>
 
@@ -93,9 +177,24 @@
                 <th>Teslim Edilen</th>
                 <th>Değişen</th>
                 <th>İade</th>
-                <th>Saat</th>
+                <!-- <th>Saat</th>-->
                 </tr>
                 </table>
+                </div>
+                <div class="card page-div" id="arşive" style="display: none; margin-top: 30px;">
+                    <h3 style="border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;"> </h3>
+                    <div style="overflow-x: auto;">
+                    <table class="arşiv-tablosu" id="arch">
+                              <tr >
+                <th>Müşteriler</th>
+                <th>Teslim Edilen</th>
+                <th>Değişen</th>
+                <th>İade</th>
+                <!-- <th>Saat</th>-->
+                <th>Detay</th>
+                </tr>
+            </table>
+            </div>
                 </div>
             <div class="card page-div" id="ayarlar" style="display: none; margin-top: 30px;">
                 <h3 style="border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Sistem Ayarları</h3>
@@ -178,12 +277,15 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
     console.error("ortak tablo bulunamadı");
     return;
 }
+    let erease = new Date();
+    erease.setMonth(erease.getMonth() + 1);
     try{
         await setDoc(doc(db,"Arşiv",prev_dates),{
         Veriler:archive.data().Veriler    
         });
         await setDoc(doc(db,ortak_tablo,"tablo_kayitlari"),{
-        Veriler:[]
+        Veriler:[],
+        expireAt:erease
     });
     }catch(error){
         console.error("arşivce atılamadı");
@@ -226,7 +328,7 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                 <th>Teslim Edilen</th>
                 <th>Değişen</th>
                 <th>İade</th>
-                <th>Saat</th>
+                <!-- <th>Saat</th>-->
                 </tr>
                 </table>
                      `
@@ -254,7 +356,6 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
     const tablo = document.querySelector(".excel-tablosu");
     const satirlar = tablo.querySelectorAll("tr");
     
-    // Verileri içine dolduracağımız boş bir dizi (liste) oluşturuyoruz
     let tabloVerileri = [];
                 if(satirlar.length===1)
                {
@@ -263,28 +364,27 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                }
 
     
-    // Döngüyü 1'den başlatıyoruz çünkü 0. satırda <th> (Başlıklar) var, onları kaydetmeye gerek yok.
+    
     for (let i = 1; i < satirlar.length; i++) {
         let hucreler = satirlar[i].querySelectorAll("td");  
         
-        // Eğer satırda hücre varsa veriyi al
         
         if (hucreler.length >= 5) {
             let musteriIsmi = hucreler[0].textContent.trim();
             let Teslim = hucreler[1].textContent.trim();
             let değişim= hucreler[2].textContent.trim();
             let Iade = hucreler[3].textContent.trim();
-            let saat = hucreler[4].textContent.trim();
+            //let saat = hucreler[4].textContent.trim();
         
 
         
-            if (musteriIsmi !== "" && saat !== "" && Teslim !== "" && Iade !== "" && değişim !== "") {
+            if (musteriIsmi !== "" &&  Teslim !== "" && Iade !== "" && değişim !== "") {
                 tabloVerileri.push({
                     musteri: musteriIsmi,
                     TeslimEdilen:Teslim,
                     iade:Iade,
                     değişen:değişim,
-                    Saat: saat
+                    
                 });
             }else{
                 alert("her hücre dolu olmalı");
@@ -324,7 +424,7 @@ tablo.insertAdjacentHTML('beforeend', sonveriler.map(satir =>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.TeslimEdilen}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.iade}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.değişen}</td>
-        <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.Saat}</td>
+         <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.Saat}</td>-->
     </tr>`
 ).join(''));
 }
@@ -393,63 +493,82 @@ ayarKaydetButonu.addEventListener("click", async () => {
     }, 2000);
 });
 
-async function send_mutual() {
-    const send = document.querySelector(".ortak-tablo");
-    const rows = send.querySelectorAll("tr");
-    let tabloVerileri = [];
-
-    for(let i = 1; i < rows.length; i++) {
-        let hucreler = rows[i].querySelectorAll("td");  
-        
-        if (hucreler.length >= 5) {
-            let musteriIsmi = hucreler[0].textContent.trim();
-            let Teslim = hucreler[1].textContent.trim();
-            let değişim = hucreler[2].textContent.trim();
-            let Iade = hucreler[3].textContent.trim();
-            let saat = hucreler[4].textContent.trim();
-
-            if (musteriIsmi !== "" && saat !== "" && Teslim !== "" && Iade !== "" && değişim !== "") {
-                tabloVerileri.push({
-                    musteri: musteriIsmi,
-                    TeslimEdilen: Teslim,
-                    iade: Iade,
-                    değişen: değişim,
-                    Saat: saat
-                });
-            }
-        }
-    }
-
-
-let clear_data = FetchNPatch(tabloVerileri);
-
-try {
-    await setDoc(doc(db, ortak_tablo, "tablo_kayitlari"), {
-        Veriler: clear_data
-    });
-} catch(error) {
-    alert("Veriler veritabanına yazılamadı!");
-}
-}
 async function mutualfunc() {
-    const tablo_datas = await getDoc(doc(db, aktifKullanici, "tablo_kayitlari"));
-    
-    if (tablo_datas.exists() && tablo_datas.data().Veriler) {
-        const table_mutual = document.querySelector(".ortak-tablo");
-        const tablo_data = tablo_datas.data().Veriler;
+    const pSnap = await getDoc(doc(db, aktifKullanici, "tablo_kayitlari"));
+    if (!pSnap.exists() || !pSnap.data().Veriler) return;
+    const pData = pSnap.data().Veriler;
+
+    const mSnap = await getDoc(doc(db, ortak_tablo, "tablo_kayitlari"));
+    let mData = (mSnap.exists() && mSnap.data().Veriler) ? mSnap.data().Veriler : [];
+
+    let agg = {};
+
+    mData.forEach(row => {
+        agg[row.musteri] = row;
+        if (!agg[row.musteri].detail) agg[row.musteri].detail = {};
+    });
+
+    pData.forEach(row => {
+        let c = row.musteri;
+
+        if (!agg[c]) {
+            agg[c] = {
+                musteri: c,
+                TeslimEdilen: Number(row.TeslimEdilen) || 0,
+                değişen: Number(row.değişen) || 0,
+                iade: Number(row.iade) || 0,
+                //Saat: row.Saat,
+                detail: {}
+            };
+        } else {
+            agg[c].TeslimEdilen += Number(row.TeslimEdilen) || 0;
+            agg[c].değişen += Number(row.değişen) || 0;
+            agg[c].iade += Number(row.iade) || 0;
+            //agg[c].Saat = row.Saat;
+        }
+
+        let addT = row.TeslimEdilen || 0;
+        //let addS=row.Saat;
+        agg[c].detail[aktifKullanici] = (agg[c].detail[aktifKullanici] || 0) + addT;
+    });
+
+    let finData = Object.values(agg);
+
+    try {
+        await setDoc(doc(db, ortak_tablo, "tablo_kayitlari"), { Veriler: finData });
+
+        const mTab = document.querySelector(".ortak-tablo");
         
-        table_mutual.insertAdjacentHTML('beforeend', tablo_data.map(satir => 
-            `<tr>
-                <td>${satir.musteri}</td>
-                <td>${satir.TeslimEdilen}</td>
-                <td>${satir.değişen}</td>
-                <td>${satir.iade}</td>
-                <td>${satir.Saat}</td>
-            </tr>`
-        ).join(''));
-        
-        send_mutual();
+        mTab.innerHTML = `
+            <tr>
+                <th>Müşteri</th>
+                <th>Teslim Edilen</th>
+                <th>Değişen</th>
+                <th>İade</th>
+                 <!--<th>Saat</th>-->
+                <th>Detay</th>
+            </tr>
+        `;
+
+        mTab.insertAdjacentHTML('beforeend', finData.map(row => {
+            let detTxt = Object.entries(row.detail).map(([usr, amt]) => `${usr}: ${amt}`).join(" | ");
+            
+            return `<tr>
+                <td>${row.musteri}</td>
+                <td>${row.TeslimEdilen}</td>
+                <td>${row.değişen}</td>
+                <td>${row.iade}</td>
+                <!-- <td>${row.Saat}</td>-->
+                <td>${detTxt}</td>
+            </tr>`;
+        }).join(''));
+    } catch (err) {
+        alert("Error writing to DB");
     }
+    await setDoc(doc(db, aktifKullanici, "tablo_kayitlari"), {
+            Veriler: []
+        });
+        location.reload();
 }
 async function callback_mutual() {
     await karsilastir();
@@ -466,18 +585,21 @@ async function callback_mutual() {
         <th>Teslim Edilen</th>
         <th>Değişen</th>
         <th>İade</th>
-        <th>Saat</th>
+        <!-- <th>Saat</th>-->
+        <th>Detay</th>
     </tr>
 `;
         }
-        if (data.length > 0) {
+        
+if (data.length > 0) {
             mutual_table.insertAdjacentHTML('beforeend', data.map(satir =>
                  `<tr>
                 <td>${satir.musteri}</td>
                 <td>${satir.TeslimEdilen}</td>
-                <td>${satir.iade}</td>
                 <td>${satir.değişen}</td>
-                <td>${satir.Saat}</td>
+                <td>${satir.iade}</td>
+                 <!--<td>${satir.Saat}</td>-->
+                <td>${satir.detail ? Object.entries(satir.detail).map(([usr, amt]) => `${usr}: ${amt}`).join(' | ') : ''}</td>
             </tr>`
             ).join(''));
         }
@@ -485,42 +607,66 @@ async function callback_mutual() {
         console.log("Tabloda henüz kayıt yok veya belge bulunamadı.");
     }
 }
-function FetchNPatch(hamVeriler) {
-    let bakkalDefteri = {}; 
-
-    hamVeriler.forEach(satir => {
-        let musteriIsmi = satir.musteri;
-
-        
-        if (!bakkalDefteri[musteriIsmi]) {
-            bakkalDefteri[musteriIsmi] = {
-                musteri: musteriIsmi,
-               
-                TeslimEdilen: Number(satir.TeslimEdilen) || 0,
-                değişen: Number(satir.değişen) || 0,
-                iade: Number(satir.iade) || 0,
-                Saat: satir.Saat 
-            };
-        } 
-        
-        else {
-            bakkalDefteri[musteriIsmi].TeslimEdilen += Number(satir.TeslimEdilen) || 0;
-            bakkalDefteri[musteriIsmi].değişen += Number(satir.değişen) || 0;
-            bakkalDefteri[musteriIsmi].iade += Number(satir.iade) || 0;
-            
-
-            bakkalDefteri[musteriIsmi].Saat = satir.Saat; 
-        }
-    });
-
-   
-    return Object.values(bakkalDefteri);
+async function callback_archive() {
+const arch=document.getElementById("arch");
+for(let i=1;i<=30;i++)
+{
+    const tarih= new Date();
+    tarih.setDate(tarih.getDate()-i);
+    const day1=tarih.getDate();
+const month1=tarih.getMonth()+1;
+const year1=tarih.getFullYear();
+const date_text1 = `${day1}-${month1}-${year1}`;
+const data= await getDoc(doc(db,"Arşiv",date_text1));
+if(data.exists()){
+const gelenveriler=data.data().Veriler;
+let html = `<tr style="background-color:#blue;"> <td colspan="6" style="background-color:#blue; text-align:center;"><b>${date_text1}</b></td> </tr>`;
+html+= gelenveriler.map(satir=>
+    `
+    <tr>
+                <td>${satir.musteri}</td>
+                <td>${satir.TeslimEdilen}</td>
+                <td>${satir.değişen}</td>
+                <td>${satir.iade}</td>
+                <!-- <td>${satir.Saat}</td>-->
+                <td>${satir.detail ? Object.entries(satir.detail).map(([usr, amt]) => `${usr}: ${amt}`).join(' | ') : ''}</td>
+            </tr>`
+            ).join('');
+            arch.insertAdjacentHTML('beforeend',html);
+} 
+    }
 }
+async function delete_old() {
+    let i = 30;
+    let devam = true;
 
+    while (devam) {
+        const date = new Date();
+        date.setDate(dt.getDate() - i);
 
+        const docId = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
+        try {
+            const ref = doc(db, "Arşiv", docId);
+            const snap = await getDoc(ref);
+
+            if (snap.exists()) {
+                await deleteDoc(ref);
+                i++;
+            } else {
+                devam = false;
+            }
+        } catch (error) {
+            devam = false;
+        }
+    }
+}
 
    if(panelVerileriniGetir()){callback();
 callback_mutual();
+delete_old();
+callback_archive();
+
    }
                 document.getElementById("addRow").addEventListener("click", addClient);
                 document.getElementById("save").addEventListener("click", save);
