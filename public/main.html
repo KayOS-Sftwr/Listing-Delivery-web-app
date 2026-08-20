@@ -126,6 +126,224 @@ body.dark-theme .arşiv-tablosu td[colspan="6"] {
     padding: 10px;
     letter-spacing: 1px;
 }
+
+#Kullanicilar {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+}
+
+
+.kullanici-satiri {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 10px;
+    border-bottom: 1px solid #ecf0f1; 
+    transition: background-color 0.2s ease;
+    border-radius: 8px;
+}
+
+
+.kullanici-satiri:hover {
+    background-color: #f8f9fa;
+}
+
+
+.kullanici-satiri:last-child {
+    border-bottom: none;
+}
+
+
+.kullanici-satiri hr {
+    display: none;
+}
+
+/* Kullanıcı İsmi */
+.kullanici-satiri h5 {
+    margin: 0;
+    font-size: 16px;
+    color: #2c3e50; 
+    font-weight: 600;
+}
+
+/* Çalışanı Sil Butonu */
+.kullanici-satiri .delete {
+    background-color: #e74c3c; 
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Buton Hover Efekti */
+.kullanici-satiri .delete:hover {
+    background-color: #c0392b; 
+    transform: scale(0.95); 
+}
+
+
+body.dark-theme #Kullanicilar {
+    background-color: #1e1e1e;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .kullanici-satiri {
+    border-bottom: 1px solid #333333;
+}
+
+body.dark-theme .kullanici-satiri:hover {
+    background-color: #2c2c2c;
+}
+
+body.dark-theme .kullanici-satiri h5 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .kullanici-satiri .delete {
+    background-color: #d32f2f; /* Karanlık moda daha uygun, göz yormayan mat kırmızı */
+}
+
+body.dark-theme .kullanici-satiri .delete:hover {
+    background-color: #b71c1c;
+}
+@media screen and (max-width: 768px) {
+    
+    .ortak-tablo, .arşiv-tablosu, .excel_tablosu,
+    .ortak-tablo thead, .arşiv-tablosu thead, .excel_tablosu thead,
+    .ortak-tablo tbody, .arşiv-tablosu tbody, .excel_tablosu tbody,
+    .ortak-tablo th, .arşiv-tablosu th, .excel_tablosu th,
+    .ortak-tablo td, .arşiv-tablosu td, .excel_tablosu td,
+    .ortak-tablo tr, .arşiv-tablosu tr, .excel_tablosu tr { 
+        display: block; 
+    }
+    
+    .ortak-tablo thead tr, .arşiv-tablosu thead tr, .excel_tablosu thead tr { 
+        position: absolute; 
+        top: -9999px; 
+        left: -9999px;
+    }
+    
+    .ortak-tablo tr, .arşiv-tablosu tr, .excel_tablosu tr {
+        margin-bottom: 20px;
+        border-radius: 12px;
+        padding: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #f0f0f0;
+    }
+    
+    body.dark-theme .ortak-tablo tr, 
+    body.dark-theme .arşiv-tablosu tr, 
+    body.dark-theme .excel_tablosu tr {
+        background-color: #2c2c2c;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: 1px solid #444;
+    }
+
+    .ortak-tablo td, .arşiv-tablosu td, .excel_tablosu td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+        border-bottom: 1px solid #f5f5f5;
+        padding-top: 12px; 
+        padding-bottom: 12px;
+        font-size: 15px;
+    }
+    
+    body.dark-theme .ortak-tablo td, 
+    body.dark-theme .arşiv-tablosu td, 
+    body.dark-theme .excel_tablosu td {
+        border-bottom-color: #3b3b3b; 
+        color: #e0e0e0;
+    }
+
+    .ortak-tablo td:last-child, 
+    .arşiv-tablosu td:last-child, 
+    .excel_tablosu td:last-child {
+        border-bottom: none;
+    }
+    
+    .ortak-tablo td::before, 
+    .arşiv-tablosu td::before, 
+    .excel_tablosu td::before {
+        position: absolute; 
+        left: 15px; 
+        width: 45%; 
+        text-align: left; 
+        font-weight: bold; 
+        color: #7f8c8d;
+    }
+    
+    body.dark-theme .ortak-tablo td::before, 
+    body.dark-theme .arşiv-tablosu td::before, 
+    body.dark-theme .excel_tablosu td::before {
+        color: #aaa;
+    }
+
+    .ortak-tablo td:nth-of-type(1)::before { content: "Müşteri:"; }
+    .ortak-tablo td:nth-of-type(2)::before { content: "Teslim Edilen:"; }
+    .ortak-tablo td:nth-of-type(3)::before { content: "Değişen:"; }
+    .ortak-tablo td:nth-of-type(4)::before { content: "İade:"; }
+    .ortak-tablo td:nth-of-type(5)::before { content: "Detay:"; }
+    
+    .ortak-tablo td:nth-of-type(1) { font-weight: bold; color: #2c3e50; font-size: 18px; border-bottom: 2px solid #3498db; }
+    body.dark-theme .ortak-tablo td:nth-of-type(1) { color: #fff; border-bottom: 2px solid #2980b9; }
+
+    .excel_tablosu td:nth-of-type(1)::before { content: "Müşteri:"; }
+    .excel_tablosu td:nth-of-type(2)::before { content: "Teslim Edilen:"; }
+    .excel_tablosu td:nth-of-type(3)::before { content: "Değişen:"; }
+    .excel_tablosu td:nth-of-type(4)::before { content: "İade:"; }
+
+    .arşiv-tablosu td:nth-of-type(1)::before { content: "Tarih:"; }
+    .arşiv-tablosu td:nth-of-type(2)::before { content: "Müşteri:"; }
+    .arşiv-tablosu td:nth-of-type(3)::before { content: "Toplam Teslim:"; }
+}
+@media screen and (max-width: 768px) {
+    body {
+        flex-direction: column;
+        display: flex;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        border-right: none;
+        border-bottom: 1px solid #ecf0f1;
+        z-index: 10;
+    }
+
+    body.dark-theme .sidebar {
+        border-bottom: 1px solid #333;
+    }
+
+    .sidebar .menu-item {
+        flex: 0 0 auto;
+        margin-right: 10px;
+        margin-bottom: 0;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 10px;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+}
     </style>
 </head>
 <body>
@@ -235,7 +453,7 @@ body.dark-theme .arşiv-tablosu td[colspan="6"] {
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getCountFromServer,doc, setDoc,getDocs,getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getCountFromServer,doc, setDoc,getDocs,getDoc,deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Firebase Yapılandırması (Kendi config bilgilerini buraya kopyala)
         const firebaseConfig = {
@@ -349,8 +567,11 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>-->
-        </tr>
-    `);}
+        </tr>   <button id="delete_row">X</button>
+    `);
+        
+
+}
                async function save(){
 
     const tablo = document.querySelector(".excel-tablosu");
@@ -378,7 +599,7 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
         
 
         
-            if (musteriIsmi !== "" &&  Teslim !== "" && Iade !== "" && değişim !== "") {
+            if (musteriIsmi !== "" && true || Teslim !== "" || Iade !== "" || değişim !== "") {
                 tabloVerileri.push({
                     musteri: musteriIsmi,
                     TeslimEdilen:Teslim,
@@ -387,7 +608,7 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                     
                 });
             }else{
-                alert("her hücre dolu olmalı");
+                alert("müşteri boş kalamaz");
                 return;
             }}
             else{
@@ -430,16 +651,16 @@ tablo.insertAdjacentHTML('beforeend', sonveriler.map(satir =>
 }
     }
 
-    const menuButonlari = document.querySelectorAll(".menu-item");
-    const tumSayfalar = document.querySelectorAll(".page-div");
-    menuButonlari.forEach(buton=>{buton.addEventListener("click", async function change() {
-       const open= buton.getAttribute("data-locate");
-        tumSayfalar.forEach(sayfa => {
-        sayfa.style.display = 'none'; 
-});
-    document.getElementById(open).style.display = 'block';
-    });
-});
+ //   const menuButonlari = document.querySelectorAll(".menu-item");
+ //   const tumSayfalar = document.querySelectorAll(".page-div");
+ //   menuButonlari.forEach(buton=>{buton.addEventListener("click", async function change() {
+//       const open= buton.getAttribute("data-locate");
+ //       tumSayfalar.forEach(sayfa => {
+//        sayfa.style.display = 'none'; 
+//});
+//    document.getElementById(open).style.display = 'block';
+ //   });
+//});
 
 const temaSecici = document.getElementById("tema-secici");
 const puntoSecici = document.getElementById("punto-secici");
@@ -517,19 +738,24 @@ async function mutualfunc() {
                 TeslimEdilen: Number(row.TeslimEdilen) || 0,
                 değişen: Number(row.değişen) || 0,
                 iade: Number(row.iade) || 0,
-                //Saat: row.Saat,
                 detail: {}
             };
         } else {
             agg[c].TeslimEdilen += Number(row.TeslimEdilen) || 0;
             agg[c].değişen += Number(row.değişen) || 0;
             agg[c].iade += Number(row.iade) || 0;
-            //agg[c].Saat = row.Saat;
         }
 
-        let addT = row.TeslimEdilen || 0;
-        //let addS=row.Saat;
-        agg[c].detail[aktifKullanici] = (agg[c].detail[aktifKullanici] || 0) + "--" +addT ;
+        let addT = Number(row.TeslimEdilen) || 0;
+
+        if (addT > 0) {
+            let mevcut = agg[c].detail[aktifKullanici];
+            if (mevcut && mevcut !== 0 && mevcut !== "0") {
+                agg[c].detail[aktifKullanici] = mevcut + "--" + addT;
+            } else {
+                agg[c].detail[aktifKullanici] = addT.toString();
+            }
+        }
     });
 
     let finData = Object.values(agg);
@@ -545,7 +771,6 @@ async function mutualfunc() {
                 <th>Teslim Edilen</th>
                 <th>Değişen</th>
                 <th>İade</th>
-                 <!--<th>Saat</th>-->
                 <th>Detay</th>
             </tr>
         `;
@@ -553,22 +778,23 @@ async function mutualfunc() {
         mTab.insertAdjacentHTML('beforeend', finData.map(row => {
             let detTxt = Object.entries(row.detail).map(([usr, amt]) => `${usr}: ${amt}`).join(" | ");
             
-             `<tr>
+            return `<tr>
                 <td>${row.musteri}</td>
                 <td>${row.TeslimEdilen}</td>
                 <td>${row.değişen}</td>
                 <td>${row.iade}</td>
-                <!-- <td>${row.Saat}</td>-->
                 <td>${detTxt}</td>
             </tr>`;
         }).join(''));
     } catch (err) {
         alert("Error writing to DB");
     }
+    
     await setDoc(doc(db, aktifKullanici, "tablo_kayitlari"), {
-            Veriler: []
-        });
-        location.reload();
+        Veriler: []
+    });
+    
+    location.reload();
 }
 async function callback_mutual() {
     await karsilastir();
@@ -661,13 +887,73 @@ async function delete_old() {
         }
     }
 }
+async function admin() {
+    const menu=document.querySelector(".sidebar");
+    const con=document.querySelector(".content");
+    const user_data=await getDocs(collection(db,"kullanicilar"));
+    const proc_users=user_data.docs;
+    //const user_doc_name=user_data.docs
+    if(aktifKullanici==="ADMİN")
+{
+        menu.insertAdjacentHTML("beforeend",`
+         <div class="menu-item" id="users" data-locate="kullanıcılar">🧎‍➡️Kullanıcılar</div>
+        `);
+        const us=document.getElementById("users");
+        con.insertAdjacentHTML('beforeend',`
+            <div class="page-div" id="Kullanicilar" style="display:none;"> </div>`)
+
+        const pages=document.querySelectorAll(".page-div");
+        const div=document.getElementById("Kullanicilar");
+        us.addEventListener("click", async function () {
+            const pages=document.querySelectorAll(".page-div");
+            pages.forEach(divs=>divs.style.display='none');
+            pages.forEach(page=>page.style.display='none');
+            div.insertAdjacentHTML('beforeend', proc_users.map(docs=>`
+            <div class="kullanici-satiri page-div">
+             <h5>${docs.data().isim}</h5>   <button class="delete" data-docname="${docs.id}" data-name="${docs.data().isim}">Çalışanı Sil</button>
+            <hr>
+           </div>
+             `).join(''))
+            
+    document.getElementById("Kullanicilar").style.display='block';
+    const delete_button=document.querySelectorAll(".delete");
+    delete_button.forEach(sil=>sil.addEventListener('click', async function (){
+        const delete_target=sil.getAttribute("data-docname");
+        const delete_settings=sil.getAttribute("data-name");
+         try{
+             await deleteDoc(doc(db,"kullanicilar",delete_target));
+             await deleteDoc(doc(db,delete_settings,"ayarlar"));
+             await deleteDoc(doc(db,delete_settings,"tablo_kayitlari"));
+             sil.parentElement.remove();
+        }catch(err)
+        {
+         alert("kullanıcı silinemedi"+ err.message);
+            return;
+        }
+
+        }))
+    })
+}
+}
+    const menuButonlari = document.querySelectorAll(".menu-item");
+    menuButonlari.forEach(buton=>{buton.addEventListener("click", async function change() {
+        const tumSayfalar = document.querySelectorAll(".page-div");
+       const open= buton.getAttribute("data-locate");
+        tumSayfalar.forEach(sayfa => {
+        sayfa.style.display = 'none'; 
+});
+    document.getElementById(open).style.display = 'block';
+    });
+});
+
+
 
    if(panelVerileriniGetir()){callback();
 callback_mutual();
 delete_old();
 callback_archive();
-
-   }
+admin();
+   }            
                 document.getElementById("addRow").addEventListener("click", addClient);
                 document.getElementById("save").addEventListener("click", save);
                 document.getElementById("Send").addEventListener("click",mutualfunc)        
