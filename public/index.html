@@ -103,19 +103,20 @@
 </style>
 </head>
 <body>
-    <form style="text-align:  center; margin-top: 200px;"  method="post">
+           <h1 style="text-align: center; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', sans-serif; font-size: 4.5rem; font-weight: 900; color: #d97706; letter-spacing: 5px; text-shadow: 3px 3px 0px #fcd34d; margin-bottom: 20px; margin-top: 200px;">ABG</h1>
+    <form style="text-align:  center;"  method="post">
         <label for="Name">Ad Soyad:</label>
         <input type="text" id="Name" name="Name"><br><br>
         <label for="Password">Şifre:</label>
         <input type="password" id="password" name="Password"><br><br>
         <input type="submit" id="giriş" value="Giriş Yap" name="Submit">
     </form>
-<div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 20px;">  <button type="button"  onclick="window.location.href='register.html'">Yeni Hesap Aç</button> </div> 
+<div style="display: none; justify-content: center; align-items: center; width: 100%; margin-top: 20px;" id="register_button">  <button type="button"  onclick="window.location.href='register.html'">Yeni Hesap Aç</button> </div> 
 <script type="module">
 const qualify=document.getElementById("giriş");
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getFirestore, collection,query, where, addDoc,getCountFromServer,getDocs} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection,query, where, addDoc,getCountFromServer,getDocs,getDoc,doc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   const firebaseConfig = {
   apiKey: "AIzaSyC4WNPVJmGtCEYODs-HRr31xylLvaGh_00",
   authDomain: "firin-de67b.firebaseapp.com",
@@ -128,6 +129,30 @@ const qualify=document.getElementById("giriş");
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
+    async function watch() {
+     const reggi= await getDoc(doc(db,"sistem","Kayitlar"));
+     if(reggi.exists())
+     {
+        const eleman=document.getElementById("register_button");
+        //console.log("var");
+        if(reggi.data().Regi==="False")
+     {
+    
+        const eleman=document.getElementById("register_button");
+        if (eleman) {
+           // console.log("var bak burda eleman")
+                eleman.remove();
+            }
+     }else if(reggi.data().Regi==="True")
+     {
+            eleman.style.display = "flex";
+     }
+
+     }
+}
+document.addEventListener("DOMContentLoaded", function() {
+    watch();
+    });
 
 qualify.addEventListener("click", function(event) {
 event.preventDefault();
@@ -150,12 +175,8 @@ sessionStorage.setItem("aktifKullanici", Name);
 alert("giriş başarılı ana sayfaya yönlendiriliyorsunuz");
 window.location.href="main.html";
 }}
-
 kontrol();
-
-
-    });
-
+});
 </script>
 
 </body>

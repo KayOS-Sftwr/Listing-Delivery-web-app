@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://firebase.googleapis.com;">
     <title>Kontrol Paneli</title>
+   
     <style>
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; }
@@ -301,9 +303,11 @@ body.dark-theme .kullanici-satiri .delete:hover {
     .excel_tablosu td:nth-of-type(3)::before { content: "Değişen:"; }
     .excel_tablosu td:nth-of-type(4)::before { content: "İade:"; }
 
-    .arşiv-tablosu td:nth-of-type(1)::before { content: "Tarih:"; }
-    .arşiv-tablosu td:nth-of-type(2)::before { content: "Müşteri:"; }
-    .arşiv-tablosu td:nth-of-type(3)::before { content: "Toplam Teslim:"; }
+    .arşiv-tablosu td:nth-of-type(1)::before { content: "Müşteri:"; }
+    .arşiv-tablosu td:nth-of-type(2)::before { content: "Teslim Edilen:"; }
+    .arşiv-tablosu td:nth-of-type(3)::before  { content: "Değişen:"; }
+    .arşiv-tablosu td:nth-of-type(4)::before { content: "İade:"; }
+    .arşiv-tablosu td:nth-of-type(5)::before { content: "Detay:"; }
 }
 @media screen and (max-width: 768px) {
     body {
@@ -317,7 +321,7 @@ body.dark-theme .kullanici-satiri .delete:hover {
         display: flex;
         flex-direction: row;
         overflow-x: auto;
-        padding: 10px;
+        padding: 25px;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
         border-right: none;
@@ -333,8 +337,8 @@ body.dark-theme .kullanici-satiri .delete:hover {
         flex: 0 0 auto;
         margin-right: 10px;
         margin-bottom: 0;
-        padding: 10px 15px;
-        font-size: 14px;
+        padding: 15px 25px;
+        font-size: 20px;
     }
 
     .content {
@@ -558,18 +562,20 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
             }
             return true;
         }
+        let row_counter=1;
         function addClient(){
            
           document.querySelector(".excel-tablosu").insertAdjacentHTML('beforeend', `
-        <tr>
+        <tr id="personal_row${row_counter}">
             <td contenteditable="true" style="background-color:gray"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
             <td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>
+            <td> <button class="delete_row" data-row="personal_row${row_counter}">X</button></td>
             <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric"></td>-->
-        </tr>   <button id="delete_row">X</button>
+        </tr>   
     `);
-        
+        row_counter++;
 
 }
                async function save(){
@@ -578,11 +584,11 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
     const satirlar = tablo.querySelectorAll("tr");
     
     let tabloVerileri = [];
-                if(satirlar.length===1)
+              /*  if(satirlar.length===1)
                {
                 alert("satır yok");
                 return;
-               }
+               }*/
 
     
     
@@ -634,18 +640,20 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                 }
              
     async function callback() {
-
+        let callback_row=1;
     const veriler=await getDoc(doc(db,aktifKullanici,"tablo_kayitlari"));
     if (veriler.exists()) {
     const sonveriler=veriler.data().Veriler;
      const tablo=document.querySelector(".excel-tablosu");
 tablo.insertAdjacentHTML('beforeend', sonveriler.map(satir => 
-    `<tr>
+    `<tr  id="personal_row${callback_row}" >
         <td contenteditable="true" style="background-color:gray">${satir.musteri}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.TeslimEdilen}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.iade}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.değişen}</td>
+         <td> <button class="delete_row" data-row="personal_row${callback_row++}">X</button></td>
          <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.Saat}</td>-->
+         
     </tr>`
 ).join(''));
 }
@@ -715,6 +723,13 @@ ayarKaydetButonu.addEventListener("click", async () => {
 });
 
 async function mutualfunc() {
+     const tablo = document.querySelector(".excel-tablosu");
+    const satirlar = tablo.querySelectorAll("tr");
+    if(satirlar.length===1)
+               {
+                alert("satır yok");
+                return;
+               }
     const pSnap = await getDoc(doc(db, aktifKullanici, "tablo_kayitlari"));
     if (!pSnap.exists() || !pSnap.data().Veriler) return;
     const pData = pSnap.data().Veriler;
@@ -914,9 +929,60 @@ async function admin() {
             <hr>
            </div>
              `).join(''))
-            
+             con.insertAdjacentHTML('beforeend',`
+            <div class="page-div" id="kayit_kapatma" style="display:none;">
+                <button id="close_open" style="display: block; width: 100%; max-width: 250px; margin: 20px auto; padding: 12px 20px; background-color: #ef4444; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease, transform 0.1s ease;"> Kayıtları Kapat</button>
+                </div>`)
     document.getElementById("Kullanicilar").style.display='block';
+     document.getElementById("kayit_kapatma").style.display='block';
     const delete_button=document.querySelectorAll(".delete");
+  const register=  document.getElementById("close_open");
+  const reggi=await getDoc(doc(db,"sistem","Kayitlar"));
+  if(reggi.exists())
+  {
+    if(reggi.data().Regi==="True"){
+register.innerText="Kayıtları kapat"
+register.style.backgroundColor='green';
+    }
+    if(reggi.data().Regi==="False")
+   {
+register.innerText="Kayıtları aç"
+register.style.backgroundColor='red';
+   }
+  }
+    register.addEventListener('click', async function () {
+             const reggi=await getDoc(doc(db,"sistem","Kayitlar"));
+   if(reggi.exists())
+  {
+    if(reggi.data().Regi==="True"){
+    await setDoc(doc(db,"sistem","Kayitlar"),{
+    Regi:"False"
+    });
+register.innerText="Kayıtları aç"
+register.style.backgroundColor='red';
+  
+    }
+    if(reggi.data().Regi==="False")
+   {
+          
+    await setDoc(doc(db,"sistem","Kayitlar"),{
+    Regi:"True"
+    });
+register.innerText="Kayıtları kapat"
+register.style.backgroundColor='green';
+   }
+  }})
+ async function ad_kont(sil){
+ const if_admin=sil.getAttribute("data-name");
+        if(if_admin==="ADMİN")
+    {
+        console.log("bana bak ana");
+        sil.style.display='none';
+    }
+
+  }
+  delete_button.forEach(sil => ad_kont(sil))
+ 
     delete_button.forEach(sil=>sil.addEventListener('click', async function (){
         const delete_target=sil.getAttribute("data-docname");
         const delete_settings=sil.getAttribute("data-name");
@@ -954,7 +1020,17 @@ delete_old();
 callback_archive();
 admin();
    }            
+                
                 document.getElementById("addRow").addEventListener("click", addClient);
+                document.querySelector("#tablo").addEventListener('click', function (e) {
+    if (e.target.classList.contains('delete_row')) {
+        const row_data = e.target.getAttribute("data-row");
+        const row_element = document.getElementById(row_data);
+        if (row_element) {
+            row_element.remove();
+        }
+    }
+});
                 document.getElementById("save").addEventListener("click", save);
                 document.getElementById("Send").addEventListener("click",mutualfunc)        
                
