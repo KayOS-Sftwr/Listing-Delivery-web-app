@@ -589,7 +589,7 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                 alert("satır yok");
                 return;
                }*/
-
+let birlesikVeriler = {};
     
     
     for (let i = 1; i < satirlar.length; i++) {
@@ -598,21 +598,27 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
         
         if (hucreler.length >= 4) {
             let musteriIsmi = hucreler[0].textContent.trim().toLocaleUpperCase('tr-TR');
-            let Teslim = hucreler[1].textContent.trim();
-            let değişim= hucreler[2].textContent.trim();
-            let Iade = hucreler[3].textContent.trim();
+            let teslim = Number(hucreler[1].textContent.trim()) || 0;
+            let degisim = Number(hucreler[2].textContent.trim()) || 0;
+            let iade = Number(hucreler[3].textContent.trim()) || 0;
             //let saat = hucreler[4].textContent.trim();
-        
+            if(musteriIsmi==="")
+        {
+            alert("müşteri boş kalamaz");
+                return;
+        }
+        if (birlesikVeriler[musteriIsmi]) {
+                birlesikVeriler[musteriIsmi].TeslimEdilen += teslim;
+                birlesikVeriler[musteriIsmi].değişen += degisim;
+                birlesikVeriler[musteriIsmi].iade += iade;
 
-        
-            if (musteriIsmi !== "" && true || Teslim !== "" || Iade !== "" || değişim !== "") {
-                tabloVerileri.push({
+        } else if (musteriIsmi !== "" && true || Teslim !== "" || Iade !== "" || değişim !== "") {
+                birlesikVeriler[musteriIsmi] = {
                     musteri: musteriIsmi,
-                    TeslimEdilen:Teslim,
-                    iade:Iade,
-                    değişen:değişim,
-                    
-                });
+                    TeslimEdilen: teslim,
+                    değişen: degisim,
+                    iade: iade
+                };
             }else{
                 alert("müşteri boş kalamaz");
                 return;
@@ -624,14 +630,14 @@ const tarihMetni = `${gun}-${ay}-${yil}`;
                 
             }
         
-    
+   tabloVerileri = Object.values(birlesikVeriler);
     
     try {
         await setDoc(doc(db, aktifKullanici, "tablo_kayitlari"), {
             Veriler: tabloVerileri
         });
         
-        alert("Tablo başarıyla Firestore'a kaydedildi!");
+        alert("Tablo başarıyla  kaydedildi!");
     } catch (error) {
         console.error("Kaydetme hatası: ", error);
         alert("Kaydedilirken bir hata oluştu.");
@@ -649,8 +655,8 @@ tablo.insertAdjacentHTML('beforeend', sonveriler.map(satir =>
     `<tr  id="personal_row${callback_row}" >
         <td contenteditable="true" style="background-color:gray">${satir.musteri}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.TeslimEdilen}</td>
-        <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.iade}</td>
         <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.değişen}</td>
+        <td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.iade}</td>
          <td> <button class="delete_row" data-row="personal_row${callback_row++}">X</button></td>
          <!--<td contenteditable="true" style="background-color:gray" inputmode="numeric">${satir.Saat}</td>-->
          
